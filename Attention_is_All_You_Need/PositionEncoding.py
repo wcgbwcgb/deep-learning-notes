@@ -12,11 +12,16 @@ class MyPositionEncoding(nn.Module):
         self.PE[:, 1::2] = torch.cos(pos/div)  
 
     def forward(self, x):
-        x = x + self.PE
+        seq_len = x.size(1)
+        x = x + self.PE[:seq_len, :].unsqueeze(0)
         return x
     
-
+'''
+# torch.Size([10, 512]) can not boardcast to torch.Size([2, 10, 512]), so we need to use
+# unsqueeze(0) to cahnge torch.Size([10, 512]) into torch.Size([1, 10, 512])
 posencoding = MyPositionEncoding(10, 512)
-result = posencoding.forward(torch.rand(10, 512))
-print(result)
+result = posencoding(torch.rand(2, 10, 512))
+print(posencoding.PE.shape)  # torch.Size([10, 512]) => torch.Size([1, 10, 512])
+print(result.shape) # torch.Size([2, 10, 512])
 print("ok")
+'''
