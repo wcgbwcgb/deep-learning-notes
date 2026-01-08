@@ -13,7 +13,10 @@ class MyTransformer(nn.Module):
         self.linear = nn.Linear(d_model, token_num)
         self.dropout = nn.Dropout(p=p_dropout)
 
-    def forward(self, x, target):
+    def forward(self, x, target, src_attn_mask, trg_attn_mask):
+        # padding mask
+        src_mask = (src_attn_mask == 0).unsqueeze(1).unsqueeze(2)
+        trg_mask = (trg_attn_mask == 0).unsqueeze(1).unsqueeze(2)
         # embedding
         x = self.embed(x)
         target = self.embed(target)
@@ -24,8 +27,9 @@ class MyTransformer(nn.Module):
         x = self.dropout(x)
         target = self.dropout(target)
         # encoder and decoder
-        encoder_output = self.encoder(x)
-        decoder_output = self.decoder(target, encoder_output)
+        encoder_output = self.encoder(x, mask=src_mask)
+        decoder_output = self.decoder(target, encoder_output, src_mask=src_mask, trg_mask=trg_mask)
         # linear
         result = self.linear(decoder_output)
         return result
+    

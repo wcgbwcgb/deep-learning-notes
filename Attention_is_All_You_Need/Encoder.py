@@ -6,7 +6,7 @@ class MyEncoder(nn.Module):
         super().__init__()
         self.layers = nn.ModuleList([MyEncoderLayer(d_model, num_heads, d_ff) for i in range(N)]) # Module list Nx6
 
-    def forward(self, x):
+    def forward(self, x, mask=None):
         for layer in self.layers:
-            x = layer(x)
+            x = layer(x, mask=mask)
         return x

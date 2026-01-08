@@ -17,18 +17,23 @@ class MyDecoderLayer(nn.Module):
         )
         self.dropout = nn.Dropout(p=p_dropout)
 
-    def forward(self, x, encoder_input):
+    def forward(self, x, encoder_input, src_mask=None, trg_mask=None):
         batch_size, seq_len, _ = x.size()
         
         # masked multi head attention
-        mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1).bool()
-        mask = mask.unsqueeze(0).unsqueeze(0)
+        look_ahead_mask = torch.triu(torch.ones(seq_len, seq_len, device=x.device), diagonal=1).bool()
+        look_ahead_mask = look_ahead_mask.unsqueeze(0).unsqueeze(0)
 
-        attn_output1 = self.attn1(x, x, x, mask)
+        if trg_mask is not None:
+            combined_mask = look_ahead_mask | trg_mask
+        else:
+            combined_mask = look_ahead_mask
+
+        attn_output1 = self.attn1(x, x, x, combined_mask)
         attn_output1 = self.dropout(attn_output1)
         x = self.norm1(x + attn_output1)
 
-        attn_output2 = self.attn2(x, encoder_input, encoder_input)
+        attn_output2 = self.attn2(x, encoder_input, encoder_input, mask=src_mask)
         attn_output2 = self.dropout(attn_output2)
         x = self.norm2(x + attn_output2)
 

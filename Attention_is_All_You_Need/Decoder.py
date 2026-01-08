@@ -6,7 +6,7 @@ class MyDecoder(nn.Module):
         super().__init__()
         self.layers = nn.ModuleList([MyDecoderLayer(d_model, num_heads, d_ff) for i in range(N)]) # Module list Nx6
 
-    def forward(self, x, encoder_input):
+    def forward(self, x, encoder_input, src_mask=None, trg_mask=None):
         for layer in self.layers:
-            x = layer(x, encoder_input)
+            x = layer(x, encoder_input, src_mask=src_mask, trg_mask=trg_mask)
         return x
