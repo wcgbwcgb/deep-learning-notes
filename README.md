@@ -28,6 +28,7 @@ This README is generated partially by Ai
 This repository serves as a meticulously organized, hands-on learning environment for mastering advanced deep learning concepts, neural network optimization, and the architecture of modern sequence models, specifically focusing on PyTorch implementations.
 
 This repository collects my practical deep learning work, including:
+- from-scratch reproduction and implementation of Multi-Layer Perceptron (MLP) models
 - from-scratch implementation of core Transformer components in PyTorch
 - experiments on image classification with PyTorch
 - notes and notebooks on neural network optimization and machine learning strategy
